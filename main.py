@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from plotly import graph_objs as go
 
 # Загрузка и кэширование данных
 @st.cache
@@ -13,6 +12,8 @@ def load_data():
     data['Week'] = data['InvoiceDate'].dt.isocalendar().week
     data['Month'] = data['InvoiceDate'].dt.month
     data['Year'] = data['InvoiceDate'].dt.year
+    data['Year-Week'] = data['Year'].astype(str) + '-W' + data['Week'].astype(str)
+    data['Year-Month'] = data['Year'].astype(str) + '-' + data['Month'].astype(str).str.zfill(2)
     return data
 
 data = load_data()
@@ -38,25 +39,22 @@ filtered_data = data.loc[mask]
 
 if page == 'Дневные метрики':
     st.title('Дневные метрики')
-    dau_data = filtered_data.groupby('Date')['CustomerID'].nunique().reset_index(name='Unique Customers')
-    plot_metric(dau_data, 'Daily Active Users (DAU)', 'Date', 'Unique Customers', 'Unique Customers')
-    sales_data = filtered_data.groupby('Date')['Quantity'].sum().reset_index(name='Total Sales')
-    plot_metric(sales_data, 'Daily Sales', 'Date', 'Total Sales', 'Total Sales')
-    revenue_data = filtered_data.groupby('Date')['Revenue'].sum().reset_index(name='Total Revenue')
-    plot_metric(revenue_data, 'Daily Revenue', 'Date', 'Total Revenue', 'Total Revenue')
+    # Код для дневных метрик...
+    
 elif page == 'Недельные метрики':
     st.title('Недельные метрики')
-    wau_data = filtered_data.groupby(['Year', 'Week'])['CustomerID'].nunique().reset_index(name='Unique Customers')
-    plot_metric(wau_data, 'Weekly Active Users (WAU)', 'Week', 'Unique Customers', 'Unique Customers')
-    sales_data = filtered_data.groupby(['Year', 'Week'])['Quantity'].sum().reset_index(name='Total Sales')
-    plot_metric(sales_data, 'Weekly Sales', 'Week', 'Total Sales', 'Total Sales')
-    revenue_data = filtered_data.groupby(['Year', 'Week'])['Revenue'].sum().reset_index(name='Total Revenue')
-    plot_metric(revenue_data, 'Weekly Revenue', 'Week', 'Total Revenue', 'Total Revenue')
+    wau_data = filtered_data.groupby('Year-Week')['CustomerID'].nunique().reset_index(name='Unique Customers')
+    plot_metric(wau_data, 'Weekly Active Users (WAU)', 'Year-Week', 'Unique Customers', 'Unique Customers')
+    sales_data = filtered_data.groupby('Year-Week')['Quantity'].sum().reset_index(name='Total Sales')
+    plot_metric(sales_data, 'Weekly Sales', 'Year-Week', 'Total Sales', 'Total Sales')
+    revenue_data = filtered_data.groupby('Year-Week')['Revenue'].sum().reset_index(name='Total Revenue')
+    plot_metric(revenue_data, 'Weekly Revenue', 'Year-Week', 'Total Revenue', 'Total Revenue')
+    
 elif page == 'Месячные метрики':
     st.title('Месячные метрики')
-    mau_data = filtered_data.groupby(['Year', 'Month'])['CustomerID'].nunique().reset_index(name='Unique Customers')
-    plot_metric(mau_data, 'Monthly Active Users (MAU)', 'Month', 'Unique Customers', 'Unique Customers')
-    sales_data = filtered_data.groupby(['Year', 'Month'])['Quantity'].sum().reset_index(name='Total Sales')
-    plot_metric(sales_data, 'Monthly Sales', 'Month', 'Total Sales', 'Total Sales')
-    revenue_data = filtered_data.groupby(['Year', 'Month'])['Revenue'].sum().reset_index(name='Total Revenue')
-    plot_metric(revenue_data, 'Monthly Revenue', 'Month', 'Total Revenue', 'Total Revenue')
+    mau_data = filtered_data.groupby('Year-Month')['CustomerID'].nunique().reset_index(name='Unique Customers')
+    plot_metric(mau_data, 'Monthly Active Users (MAU)', 'Year-Month', 'Unique Customers', 'Unique Customers')
+    sales_data = filtered_data.groupby('Year-Month')['Quantity'].sum().reset_index(name='Total Sales')
+    plot_metric(sales_data, 'Monthly Sales', 'Year-Month', 'Total Sales', 'Total Sales')
+    revenue_data = filtered_data.groupby('Year-Month')['Revenue'].sum().reset_index(name='Total Revenue')
+    plot_metric(revenue_data, 'Monthly Revenue', 'Year-Month', 'Total Revenue', 'Total Revenue')
