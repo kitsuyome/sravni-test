@@ -39,7 +39,12 @@ filtered_data = data.loc[mask]
 
 if page == 'Дневные метрики':
     st.title('Дневные метрики')
-    # Код для дневных метрик...
+    dau_data = filtered_data.groupby('Date')['CustomerID'].nunique().reset_index(name='Unique Customers')
+    plot_metric(dau_data, 'Daily Active Users (DAU)', 'Date', 'Unique Customers', 'Unique Customers')
+    sales_data = filtered_data.groupby('Date')['Quantity'].sum().reset_index(name='Total Sales')
+    plot_metric(sales_data, 'Daily Sales', 'Date', 'Total Sales', 'Total Sales')
+    revenue_data = filtered_data.groupby('Date')['Revenue'].sum().reset_index(name='Total Revenue')
+    plot_metric(revenue_data, 'Daily Revenue', 'Date', 'Total Revenue', 'Total Revenue')
     
 elif page == 'Недельные метрики':
     st.title('Недельные метрики')
