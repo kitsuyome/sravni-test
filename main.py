@@ -6,7 +6,7 @@ from plotly import graph_objs as go
 # Загрузка и кэширование данных
 @st.cache
 def load_data():
-    data = pd.read_csv('/data.csv', encoding='ISO-8859-1')
+    data = pd.read_csv('data.csv', encoding='ISO-8859-1')
     data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
     return data
 
